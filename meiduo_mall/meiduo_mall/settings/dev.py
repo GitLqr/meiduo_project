@@ -209,3 +209,6 @@ LOGGING = {
         }
     }
 }
+
+# 指定自定义的用户模型类 : 值的语法=>'子应用.用户模型类'
+AUTH_USER_MODEL = 'users.User'
