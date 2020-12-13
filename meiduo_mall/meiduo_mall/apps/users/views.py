@@ -9,3 +9,7 @@ class RegisterView(View):
 
     def get(self, request):
         return render(request, 'register.html')
+
+    def post(self,request):
+        """实现用户注册业务逻辑"""
+
