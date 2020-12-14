@@ -13,6 +13,7 @@ let vm = new Vue({
         uuid: '',
         image_code: '',
         sms_code_tip: '获取短信验证码',
+        sms_code: '',
         send_flag: false,
 
         // v-show
@@ -22,11 +23,13 @@ let vm = new Vue({
         error_mobile: false,
         error_allow: false,
         error_image_code: false,
+        error_sms_code: false,
 
         // error_message
         error_name_message: '',
         error_mobile_message: '',
         error_image_code_message: '',
+        error_sms_code_message: '',
     },
     mounted() {
         // 生成图形验证码
@@ -71,6 +74,9 @@ let vm = new Vue({
                         this.error_image_code_message = response.data.errmsg;
                         this.error_image_code = true;
                         this.send_flag = false;
+                    } else { // 4002 短信验证码错误
+                        this.error_sms_code_message = response.data.errmsg;
+                        this.error_sms_code = true;
                     }
                 }
             }).catch(error => {
@@ -149,6 +155,15 @@ let vm = new Vue({
                 this.error_image_code = false;
             }
         },
+        // 检验短信验证码
+        check_sms_code() {
+            if (this.sms_code.length != 0) {
+                this.error_sms_code_message = '请填写短信验证码';
+                this.error_sms_code = true;
+            } else {
+                this.error_sms_code = false;
+            }
+        },
         // 检验是否勾选协议
         check_allow() {
             if (!this.allow) {
@@ -163,10 +178,11 @@ let vm = new Vue({
             this.check_password();
             this.check_password2();
             this.check_mobile();
+            this.check_sms_code();
             this.check_allow();
 
             // 在校验之后，注册数据中，只要有错误，就禁用掉表单的提交事件
-            if (this.error_name == true || this.error_password == true || this.error_password2 == true || this.error_mobile == true || this.error_allow == true) {
+            if (this.error_name == true || this.error_password == true || this.error_password2 == true || this.error_mobile == true || this.error_sms_code == true || this.error_allow == true) {
                 // 禁用掉表单的提交事件
                 window.event.returnValue = false;
             }

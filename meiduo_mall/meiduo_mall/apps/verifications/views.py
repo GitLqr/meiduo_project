@@ -29,8 +29,14 @@ class SMSCodeView(View):
         if not all([image_code_client, uuid]):
             return http.HttpResponseForbidden('缺少必传参数')
 
-        # 获取redis中的图形验证码
         redis_conn = get_redis_connection('verify_code')
+
+        # 判断用户是否频繁发送短信验证码
+        send_flag = redis_conn.get('send_flag_%s' % mobile)
+        if send_flag:
+            return http.JsonResponse({'code': RETCODE.THROTTLINGERR, 'errmsg': '发送短信过于频繁'})
+
+        # 获取redis中的图形验证码
         image_code_server = redis_conn.get('img_%s' % uuid)
         if image_code_server is None:
             return http.JsonResponse({'code': RETCODE.IMAGECODEERR, 'errmsg': '图形验证码已失效'})
@@ -46,6 +52,8 @@ class SMSCodeView(View):
         sms_code = '%06d' % random.randint(0, 999999)
         logger.info(sms_code)
         redis_conn.setex('sms_%s' % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)
+        # 保存发送短信验证码标记
+        redis_conn.setex('send_flag_%s' % mobile, constants.SEND_SMS_CODE_INTERVAL, 1)
         # 发送短信验证码
         CCP().send_template_sms(mobile, [sms_code, constants.SMS_CODE_REDIS_EXPIRES // 60],
                                 constants.SEND_SMS_CODE_INTERVAL)
