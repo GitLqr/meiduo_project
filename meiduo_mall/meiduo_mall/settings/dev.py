@@ -12,7 +12,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os, sys
+import os, sys, global_config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -102,8 +102,8 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '10.10.1.114',
-        'PORT': '3306',
+        'HOST': global_config.MYSQL_HOST,
+        'PORT': global_config.MYSQL_PORT,
         'USER': 'root',
         'PASSWORD': '123456',
         'NAME': 'meiduo',
@@ -114,21 +114,21 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://10.10.1.114:6379/0",
+        "LOCATION": global_config.REDIS_URL_DEFAULT,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
     "session": {  # session
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://10.10.1.114:6379/1",
+        "LOCATION": global_config.REDIS_URL_SESSION,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
     "verify_code": {  # 验证码
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://10.10.1.114:6379/2",
+        "LOCATION": global_config.REDIS_URL_VERIFY_CODE,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
