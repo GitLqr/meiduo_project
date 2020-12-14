@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # 'meiduo_mall.apps.users',  # 用户模块
     'users',  # 用户模块
     'contents',  # 首页广告模块
+    'verifications',  # 验证码模块
 ]
 
 MIDDLEWARE = [
@@ -101,7 +102,7 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '192.168.2.162',
+        'HOST': '10.10.1.114',
         'PORT': '3306',
         'USER': 'root',
         'PASSWORD': '123456',
@@ -113,19 +114,25 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://192.168.2.162:6379/0",
+        "LOCATION": "redis://10.10.1.114:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
     "session": {  # session
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://192.168.2.162:6379/1",
+        "LOCATION": "redis://10.10.1.114:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
-
+    "verify_code": {  # 验证码
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://10.10.1.114:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
 }
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "session"

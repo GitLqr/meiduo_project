@@ -1,3 +1,4 @@
+from django.contrib.auth import login
 from django.db import DatabaseError
 from django.shortcuts import render, redirect
 from django import http
@@ -5,8 +6,21 @@ from django import http
 from django.urls import reverse
 from django.views import View
 import re
-
 from users.models import User
+
+from meiduo_mall.utils.response_code import RETCODE
+
+
+class UsernameCountView(View):
+    """判断用户名是否重复注册"""
+
+    def get(self, request, username):
+        """
+        :param username: 用户名
+        :return: JSON
+        """
+        count = User.objects.filter(username=username).count()
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'count': count})
 
 
 class RegisterView(View):
@@ -41,6 +55,8 @@ class RegisterView(View):
             user = User.objects.create_user(username=username, password=password, mobile=mobile)
         except DatabaseError:
             return render(request, 'register.html', {'register_errmsg': '注册失败'})
+
+        login(request, user)
 
         # return http.HttpResponse('注册成功, 重定向到首页')
         # return redirect('/')
