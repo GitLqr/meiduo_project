@@ -36,6 +36,7 @@ class RegisterView(View):
         if allow != 'on':
             return http.HttpResponseForbidden('请勾选用户协议')
 
+        # return render(request, 'register.html', {'register_errmsg': '注册失败'})
         try:
             user = User.objects.create_user(username=username, password=password, mobile=mobile)
         except DatabaseError:
