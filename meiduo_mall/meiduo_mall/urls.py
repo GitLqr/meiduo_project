@@ -25,4 +25,6 @@ urlpatterns = [
     url(r'^', include(('contents.urls', 'contents'), namespace='contents')),
     # verifications
     url(r'^', include(('verifications.urls', 'verifications'), namespace='verifications')),
+    # oauth
+    url(r'^', include('oauth.urls')),
 ]

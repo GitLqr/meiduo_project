@@ -1,7 +1,8 @@
 import re
 
 from django import http
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import DatabaseError
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -10,6 +11,30 @@ from django_redis import get_redis_connection
 
 from meiduo_mall.utils.response_code import RETCODE
 from users.models import User
+
+
+class UserInfoView(LoginRequiredMixin, View):
+    """用户中心"""
+
+    def get(self, request):
+        # if request.user.is_authenticated:
+        #     return render(request, 'user_center_info.html')
+        # else:
+        #     return redirect(reverse('users:login'))
+        return render(request, 'user_center_info.html')
+
+
+class LogoutView(View):
+    """用户退出登录"""
+
+    def get(self, request):
+        # 清除状态保持信息
+        logout(request)
+        # 退出登录后重定向到首页
+        response = redirect(reverse('contents:index'))
+        # 删除cookies中的用户名
+        response.delete_cookie('username')
+        return response
 
 
 class LoginView(View):
@@ -46,7 +71,15 @@ class LoginView(View):
             # 记住登录:状态保持周期为两周(默认就是两周)
             request.session.set_expiry(None)
 
-        return redirect(reverse('contents:index'))
+        next = request.GET.get('next')
+        if next:
+            response = redirect(next)
+        else:
+            response = redirect(reverse('contents:index'))
+
+        # 为了实现首页右上角展示用户名信息
+        response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
+        return response
 
 
 class MobileCountView(View):
@@ -111,6 +144,7 @@ class RegisterView(View):
 
         login(request, user)
 
-        # return http.HttpResponse('注册成功, 重定向到首页')
-        # return redirect('/')
-        return redirect(reverse('contents:index'))
+        response = redirect(reverse('contents:index'))
+        # 为了实现首页右上角展示用户名信息
+        response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
+        return response
