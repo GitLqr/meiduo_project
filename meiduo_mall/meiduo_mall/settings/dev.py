@@ -30,7 +30,7 @@ SECRET_KEY = '0omct%^#09(e&zq_&uj=-@5)d2$3*$)auy)27%zo&_i_l@uk@i'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.meiduo.site']
+ALLOWED_HOSTS = ['127.0.0.1', 'www.meiduo.site']
 
 # Application definition
 
