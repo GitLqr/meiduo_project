@@ -3,7 +3,7 @@ django美多商城
 
 
 
-## 一. 启动项目
+## 一. 配置运行项目
 
 ### 1. 修改配置
 
@@ -35,6 +35,16 @@ python manage.py migrate
 ```shell script
 celery -A celery_tasks.main worker -l info
 ```
+
+> celery默认是进程池方式, 进程数以当前机器的CPU核数为参考, 每个CPU开四个进程, 可通过`--concurrency`或`-c`来指定进程数, 例如:
+>
+> `celery -A celery_tasks.main worker -l info --concurrency=20`
+>
+> 另外,Celery也支持将进程池方式改为协程方式(需要安装eventlet), 例如: 
+>
+> `pip install eventlet`
+>
+> `celery -A celery_tasks.main worker -l info -P eventlet -c=1000`
 
 ### 5. 启动项目
 
