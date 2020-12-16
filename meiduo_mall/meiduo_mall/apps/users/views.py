@@ -1,4 +1,6 @@
-import re, json, logging
+import json
+import logging
+import re
 
 from django import http
 from django.contrib.auth import login, authenticate, logout
@@ -9,12 +11,36 @@ from django.urls import reverse
 from django.views import View
 from django_redis import get_redis_connection
 
-from meiduo_mall.utils.response_code import RETCODE
-from users.models import User
-from meiduo_mall.utils.views import LoginRequiredJSONMixin
 from celery_tasks.email.tasks import send_verify_email
+from meiduo_mall.utils.response_code import RETCODE
+from meiduo_mall.utils.views import LoginRequiredJSONMixin
+from users.models import User
+from users.utils import generate_verify_email_url, check_verify_email_token
 
 logger = logging.getLogger('django')
+
+
+class VerifyEmailView(View):
+    """验证邮箱"""
+
+    def get(self, request):
+        token = request.GET.get('token')
+
+        if not token:
+            return http.HttpResponseForbidden('缺少token')
+
+        user = check_verify_email_token(token)
+        if not user:
+            return http.HttpResponseBadRequest('无效的token')
+
+        try:
+            user.email_active = True
+            user.save()
+        except Exception as e:
+            logger.error(e)
+            return http.HttpResponseServerError('激活邮箱失败')
+
+        return redirect(reverse('users:info'))
 
 
 class EmailView(LoginRequiredJSONMixin, View):
@@ -34,7 +60,8 @@ class EmailView(LoginRequiredJSONMixin, View):
             return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '添加邮箱失败'})
 
         # 发送邮箱验证邮件
-        send_verify_email.delay(email,verify_url)
+        verify_url = generate_verify_email_url(request.user)
+        send_verify_email.delay(email, verify_url)
         return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
 
 

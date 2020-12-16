@@ -12,5 +12,5 @@ def send_verify_email(to_email, verify_url):
                    '<p>感谢您使用美多商城。</p>' \
                    '<p>您的邮箱为：%s，请点击此链接激活您的邮箱：</p>' \
                    '<p><a href="%s">%s</a></p>' % (to_email, verify_url, verify_url)
-    send_mail(subject, '', settings.EMAIL_FROM, [], html_message)
+    send_mail(subject, '', settings.EMAIL_FROM, [to_email], html_message=html_message)
     pass
