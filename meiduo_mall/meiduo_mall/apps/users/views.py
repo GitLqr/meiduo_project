@@ -12,6 +12,7 @@ from django_redis import get_redis_connection
 from meiduo_mall.utils.response_code import RETCODE
 from users.models import User
 from meiduo_mall.utils.views import LoginRequiredJSONMixin
+from celery_tasks.email.tasks import send_verify_email
 
 logger = logging.getLogger('django')
 
@@ -31,6 +32,9 @@ class EmailView(LoginRequiredJSONMixin, View):
         except Exception as e:
             logger.error(e)
             return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '添加邮箱失败'})
+
+        # 发送邮箱验证邮件
+        send_verify_email.delay(email,verify_url)
         return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
 
 

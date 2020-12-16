@@ -8,7 +8,7 @@ celery_app = Celery('meiduo')
 celery_app.config_from_object('celery_tasks.config')
 
 # 注册任务
-celery_app.autodiscover_tasks(['celery_tasks.sms'])
+celery_app.autodiscover_tasks(['celery_tasks.sms', 'celery_tasks.email'])
 
 # 启动Celery进程命令: celery -A Celery入口 工作进程 -l 日志级别
 # 在celery_tasks的同级目录下,输入以下命令即可:
