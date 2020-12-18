@@ -25,7 +25,18 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 3. 修改主机Host文件
+### 3. 导入数据库数据
+
+在`others`目录中，找到所有sql文件，在远程MYSQL服务器上，使用终端输入如下命令：
+
+```shell script
+mysql -u账号 -p密码 meiduo < xxx.sql
+```
+
+> 例如：mysql -uroot -p123456 meiduo < areas.sql
+
+### 4. 修改主机Host文件
+
 ```text
 127.0.0.1 www.meiduo.site
 ```
