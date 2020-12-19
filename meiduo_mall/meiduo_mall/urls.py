@@ -19,6 +19,8 @@ from django.urls import include
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    # haystack
+    url(r'^search/', include(('haystack.urls', 'haystack'))),
     # users
     url(r'^', include(('users.urls', 'users'), namespace='users')),
     # contents

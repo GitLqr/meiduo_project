@@ -15,3 +15,6 @@ REDIS_URL_CELERY = REDIS_URL + '10'
 
 # FastDFS配置
 FDFS_URL_PREFIX = 'http://' + MY_SERVER_HOST + ':8888/'
+
+# Elasticsearch配置
+ELASTICSEARCH_URL = 'http://' + MY_SERVER_HOST + ':9200/'

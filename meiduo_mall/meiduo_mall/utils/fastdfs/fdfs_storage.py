@@ -1,15 +1,13 @@
 from django.core.files.storage import Storage
 from django.conf import settings
 
-import global_config
-
 
 class FastDFSStorage(Storage):
     """自定义文件存储类"""
 
     def __init__(self, fdfs_base_url=None):
         """文件存储类的初始化方法"""
-        self.fdfs_base_url = fdfs_base_url or global_config.FDFS_URL_PREFIX
+        self.fdfs_base_url = fdfs_base_url or settings.FDFS_BASE_URL
 
     def _open(self, name, mode='rb'):
         """
