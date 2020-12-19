@@ -41,7 +41,61 @@ mysql -u账号 -p密码 meiduo < xxx.sql
 127.0.0.1 www.meiduo.site
 ```
 
-### 4. 启动Celery任务
+### 5. 安装docker
+
+把`others/docker.zip`解压到远程ubuntu上, 根据readme.txt中指令进行安装:
+```shell script
+sudo apt-key add gpg
+sudo dpkg -i docker-ce_17.03.2~ce-0~ubuntu-xenial_amd64.deb
+```
+> 如果服务器重启过, docker的容器是不会自启动的, 可以通过`sudo docker container start [container_name或id]`来启动
+
+#### 1) 安装fastdfs
+
+使用如下如今二选一安装fastdfs:
+```shell script
+sudo docker image pull delron/fastdfs
+sudo docker load -i 文件路径/fastdfs_docker.tar
+```
+
+##### 开启tracker容器
+```shell script
+sudo docker run -dit --name tracker --network=host -v /var/fdfs/tracker:/var/fdfs delron/fastdfs tracker
+```
+>我们将 tracker 运行目录映射到宿主机的 /var/fdfs/tracker目录中。
+
+##### 开启storage容器
+```shell script
+sudo docker run -dti --name storage --network=host -e TRACKER_SERVER=192.168.2.162:22122 -v /var/fdfs/storage:/var/fdfs delron/fastdfs storage
+```
+>TRACKER_SERVER=Tracker的ip地址:22122（Tracker的ip地址不要使用127.0.0.1）
+>我们将 storage 运行目录映射到宿主机的 /var/fdfs/storage目录中。
+
+##### 导入商品图片数据
+将`others/data.tar.gz`文件拷贝到远程ubuntu上,解压到fdfs的storage目录下:
+```shell script
+cd /var/fdfs/storage
+sudo rm -rf data/
+sudo tar -zxvf data.tar.gz
+```
+
+#### 2) 安装elasticsearch
+```shell script
+sudo docker image pull delron/elasticsearch-ik:2.4.6-1.0
+```
+
+将`other/elasticsearc-2.4.6`目录拷贝到`home`目录下, 修改`/home/[用户名]/elasticsearc-2.4.6/config/elasticsearch.yml`第54行,把`network.host`修改为ubuntu的真实ip地址:
+```shell script
+network.host: 192.168.2.162
+```
+> 我的远程ubuntu的ip地址是 192.168.2.162
+
+最后使用docker运行`Elasticsearch-ik`
+```shell script
+sudo docker run -dti --name=elasticsearch --network=host -v /home/[用户名]/elasticsearch-2.4.6/config:/usr/share/elasticsearch/config delron/elasticsearch-ik:2.4.6-1.0
+```
+
+### 6. 启动Celery任务
 在`manage.py`同级目录下,执行: 
 ```shell script
 celery -A celery_tasks.main worker -l info
@@ -57,7 +111,7 @@ celery -A celery_tasks.main worker -l info
 >
 > `celery -A celery_tasks.main worker -l info -P eventlet -c=1000`
 
-### 5. 启动项目
+### 7. 启动项目
 
 在`manage.py`同级目录下,执行: 
 ```shell script
