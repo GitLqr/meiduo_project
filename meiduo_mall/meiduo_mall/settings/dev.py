@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'areas',  # 省市区三级联动
     'goods',  # 商品模块
     'orders',  # 订单
+    'payment',  # 支付
 ]
 
 MIDDLEWARE = [
@@ -279,3 +280,11 @@ HAYSTACK_CONNECTIONS = {
 }
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'  # 当添加、修改、删除数据时，自动生成索引
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 5  # haystack分页时每页记录的条数
+
+# 支付宝
+ALIPAY_APPID = '2016082100308405'
+ALIPAY_DEBUG = True
+# 电脑网站支付(正式环境), 需要跳转到 https://openapi.alipay.com/gateway.do? + order_string
+# 电脑网站支付(开发环境), 需要跳转到 https://openapi.alipaydev.com/gateway.do? + order_string
+ALIPAY_URL = 'https://openapi.alipaydev.com/gateway.do'
+ALIPAY_RETURN_URL = 'http://127.0.0.1:8000/payment/status/'  # ALIPAY_RETURN_URL = 'http://www.meiduo.site:8000/payment/status/'

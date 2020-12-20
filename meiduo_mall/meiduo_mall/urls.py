@@ -37,4 +37,6 @@ urlpatterns = [
     url(r'^', include(('carts.urls', 'carts'), namespace='carts')),
     # orders
     url(r'^', include(('orders.urls', 'orders'), namespace='orders')),
+    # payment
+    url(r'^', include(('payment.urls', 'payment'), namespace='payment')),
 ]
