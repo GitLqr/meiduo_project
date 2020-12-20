@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'oauth',  # 第三方登录
     'areas',  # 省市区三级联动
     'goods',  # 商品模块
+    'orders',  # 订单
 ]
 
 MIDDLEWARE = [

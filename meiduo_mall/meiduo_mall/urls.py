@@ -35,4 +35,6 @@ urlpatterns = [
     url(r'^', include(('goods.urls', 'goods'), namespace='goods')),
     # carts
     url(r'^', include(('carts.urls', 'carts'), namespace='carts')),
+    # orders
+    url(r'^', include(('orders.urls', 'orders'), namespace='orders')),
 ]

@@ -30,7 +30,7 @@ def merge_cart_cookies_redis(request, user, response):
         # new_cart_dict[sku_id] = {
         #     'count': cookie_dict['count']
         # }
-        
+
         # 正确的数据结构
         new_cart_dict[sku_id] = cookie_dict['count']
 

@@ -77,7 +77,7 @@
         <li class="col01"><input type="checkbox" name="" @change="on_selected_all" v-model="selected_all"></li>
         <li class="col02">全选</li>
         <li class="col03">合计(不含运费)：<span>¥</span><em>[[ total_selected_amount ]]</em><br>共计<b>[[ total_selected_count ]]</b>件商品</li>
-{#        <li class="col04"><a href="{{ url('orders:settlement') }}">去结算</a></li>#}
+        <li class="col04"><a href="{{ url('orders:settlement') }}">去结算</a></li>
     </ul>
 	<div class="footer">
 		<div class="foot_link">

@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>美多商城-订单确认</title>
+	<link rel="stylesheet" type="text/css" href="{{ static('css/reset.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ static('css/main.css') }}">
+	<script type="text/javascript" src="{{ static('js/vue-2.5.16.js') }}"></script>
+    <script type="text/javascript" src="{{ static('js/axios-0.18.0.min.js') }}"></script>
+</head>
+<body>
+	<div id="app">
+	<div class="header_con">
+		<div class="header" v-cloak>
+			<div class="welcome fl">欢迎来到美多商城!</div>
+			<div class="fr">
+                <div v-if="username" class="login_btn fl">
+                    欢迎您：<em>[[ username ]]</em>
+                    <span>|</span>
+                    <a href="{{ url('users:logout') }}">退出</a>
+                </div>
+                <div v-else class="login_btn fl">
+                    <a href="{{ url('users:login') }}">登录</a>
+                    <span>|</span>
+                    <a href="{{ url('users:register') }}">注册</a>
+                </div>
+				<div class="user_link fl">
+					<span>|</span>
+					<a href="{{ url('users:info') }}">用户中心</a>
+					<span>|</span>
+					<a href="{{ url('carts:info') }}">我的购物车</a>
+					<span>|</span>
+					<a href="user_center_order.html">我的订单</a>
+				</div>
+			</div>
+		</div>		
+	</div>
+	<div class="search_bar clearfix">
+		<a href="{{ url('contents:index') }}" class="logo fl"><img src="{{ static('images/logo.png') }}"></a>
+		<div class="search_wrap fl">
+			<form method="get" action="/search/" class="search_con">
+                <input type="text" class="input_text fl" name="q" placeholder="搜索商品">
+                <input type="submit" class="input_btn fr" name="" value="搜索">
+            </form>
+			<ul class="search_suggest fl">
+				<li><a href="#">索尼微单</a></li>
+				<li><a href="#">优惠15元</a></li>
+				<li><a href="#">美妆个护</a></li>
+				<li><a href="#">买2免1</a></li>
+			</ul>
+		</div>
+	</div>
+	<h3 class="common_title">确认收货地址</h3>
+    <div class="common_list_con clearfix" id="get_site">
+        <dl>
+        {% if addresses %}
+            <dt>寄送到：</dt>
+            {% for address in addresses %}
+            <dd @click="nowsite={{ address.id }}"><input type="radio" v-model="nowsite" value="{{ address.id }}">{{ address.province }} {{ address.city }} {{ address.district }} （{{ address.receiver }} 收） {{ address.mobile }}</dd>
+            {% endfor %}
+        {% endif %}
+        </dl>
+        <a href="{{ url('users:address') }}" class="edit_site">编辑收货地址</a>
+    </div>
+    <h3 class="common_title">支付方式</h3>
+    <div class="common_list_con clearfix">
+        <div class="pay_style_con clearfix">
+            <input type="radio" name="pay_method" value="1" v-model="pay_method">
+            <label class="cash">货到付款</label>
+            <input type="radio" name="pay_method" value="2" v-model="pay_method">
+            <label class="zhifubao"></label>
+        </div>
+    </div>
+    <h3 class="common_title">商品列表</h3>
+    <div class="common_list_con clearfix">
+        <ul class="goods_list_th clearfix">
+            <li class="col01">商品名称</li>
+            <li class="col02">商品单位</li>
+            <li class="col03">商品价格</li>
+            <li class="col04">数量</li>
+            <li class="col05">小计</li>
+        </ul>
+        {% for sku in skus %}
+        <ul class="goods_list_td clearfix">
+            <li class="col01">{{loop.index}}</li>
+            <li class="col02"><img src="{{ sku.default_image.url }}"></li>
+            <li class="col03">{{ sku.name }}</li>
+            <li class="col04">台</li>
+            <li class="col05">{{ sku.price }}元</li>
+            <li class="col06">{{ sku.count }}</li>
+            <li class="col07">{{ sku.amount }}元</li>
+        </ul>
+        {% endfor %}
+    </div>
+    <h3 class="common_title">总金额结算</h3>
+    <div class="common_list_con clearfix">
+        <div class="settle_con">
+            <div class="total_goods_count">共<em>{{ total_count }}</em>件商品，总金额<b>{{ total_amount }}元</b></div>
+            <div class="transit">运费：<b>{{ freight }}元</b></div>
+            <div class="total_pay">实付款：<b>{{ payment_amount }}元</b></div>
+        </div>
+    </div>
+    <div class="order_submit clearfix">
+        <a @click="on_order_submit" id="order_btn">提交订单</a>
+    </div>
+	<div class="footer">
+		<div class="foot_link">
+			<a href="#">关于我们</a>
+			<span>|</span>
+			<a href="#">联系我们</a>
+			<span>|</span>
+			<a href="#">招聘人才</a>
+			<span>|</span>
+			<a href="#">友情链接</a>		
+		</div>
+		<p>CopyRight © 2016 北京美多商业股份有限公司 All Rights Reserved</p>
+		<p>电话：010-****888    京ICP备*******8号</p>
+	</div>
+	</div>
+	<script type="text/javascript">
+        let default_address_id = "{{ user.default_address.id }}";
+        let payment_amount = "{{ payment_amount }}";
+    </script>
+	<script type="text/javascript" src="{{ static('js/common.js') }}"></script>
+	<script type="text/javascript" src="{{ static('js/place_order.js') }}"></script>
+</body>
+</html>
