@@ -16,16 +16,16 @@ let vm = new Vue({
     },
     mounted() {
         // 邮箱是否激活：将Python的bool数据转成JS的bool数据
-        this.email_active = (this.email_active=='True') ? true : false;
+        this.email_active = (this.email_active == 'True') ? true : false;
         // 是否在设置邮箱
-        this.set_email = (this.email=='') ? true : false;
+        this.set_email = (this.email == '') ? true : false;
 
         // 请求浏览历史记录
-        // this.browse_histories();
+        this.browse_histories();
     },
     methods: {
         // 检查email格式
-        check_email(){
+        check_email() {
             let re = /^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$/;
             if (re.test(this.email)) {
                 this.error_email = false;
@@ -34,12 +34,12 @@ let vm = new Vue({
             }
         },
         // 取消保存
-        cancel_email(){
+        cancel_email() {
             this.email = '';
             this.error_email = false;
         },
         // 保存email
-        save_email(){
+        save_email() {
             // 检查email格式
             this.check_email();
 
@@ -49,7 +49,7 @@ let vm = new Vue({
                     email: this.email
                 }, {
                     headers: {
-                        'X-CSRFToken':getCookie('csrftoken')
+                        'X-CSRFToken': getCookie('csrftoken')
                     },
                     responseType: 'json'
                 })
@@ -70,14 +70,14 @@ let vm = new Vue({
             }
         },
         // 请求浏览历史记录
-        browse_histories(){
+        browse_histories() {
             let url = '/browse_histories/';
             axios.get(url, {
                 responseType: 'json'
             })
                 .then(response => {
                     this.histories = response.data.skus;
-                    for(let i=0; i<this.histories.length; i++){
+                    for (let i = 0; i < this.histories.length; i++) {
                         this.histories[i].url = '/detail/' + this.histories[i].id + '/';
                     }
                 })

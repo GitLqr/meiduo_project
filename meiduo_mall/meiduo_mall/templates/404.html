@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>404</title>
+	<link rel="stylesheet" href="{{ static('css/reset.css') }}">
+	<style>
+		.logo{
+			position:fixed;
+			left:50%;
+			margin-left:-500px;
+			top:20px;			
+		}
+		.missing_pic{
+			display:block;
+			margin:70px auto 0px;
+		}
+		.tip{
+			text-align:center;
+			font-size:22px;
+			font-weight:bold;
+			color:#333;
+			margin-top:20px;
+		}
+		.back_to_index{
+			display:block;
+			width:130px;
+			line-height:30px;
+			border-radius:15px;
+			border:1px solid #ff3f3c;
+			background:#ff3f3c;
+			color:#fff;
+			text-align:center;
+			margin:20px auto 0;
+		}
+		.back_to_index:hover{
+			opacity:0.6
+		}
+	</style>
+</head>
+<body>
+	<a href="{{ url('contents:index') }}" class="logo"><img src="{{ static('images/logo.png') }}" alt="logo"></a>
+	<img src="{{ static('images/missing.png') }}" alt="404" class="missing_pic">
+	<h3 class="tip">Oops!你访问的页面未找到</h3>
+	<a href="{{ url('contents:index') }}" class="back_to_index">返回首页</a>
+</body>
+</html>

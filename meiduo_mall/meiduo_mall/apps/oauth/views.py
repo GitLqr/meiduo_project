@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.views import View
 from django_redis import get_redis_connection
 
+from carts.utils import merge_cart_cookies_redis
 from meiduo_mall.utils.response_code import RETCODE
 from oauth.models import OAuthQQUser
 from oauth.utils import generate_access_token, check_access_token
@@ -53,6 +54,9 @@ class QQAuthUserView(View):
             response = redirect(next)
             # 为了实现首页右上角展示用户名信息
             response.set_cookie('username', oauth_user.user.username, max_age=3600 * 24 * 15)
+
+            # 用户登录成功,合并cookie购物车到Redis购物车
+            response = merge_cart_cookies_redis(request=request, user=oauth_user.user, response=response)
             return response
 
     def post(self, request):
@@ -109,6 +113,9 @@ class QQAuthUserView(View):
 
         # cookies中写入用户名
         response.set_cookie('username', oauth_qq_user.user.username, max_age=3600 * 24 * 15)
+
+        # 用户登录成功,合并cookie购物车到Redis购物车
+        response = merge_cart_cookies_redis(request=request, user=user, response=response)
 
         return response
 

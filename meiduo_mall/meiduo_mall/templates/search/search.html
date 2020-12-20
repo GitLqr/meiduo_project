@@ -1,20 +1,20 @@
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-	<title>美多商城-商品搜索</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>美多商城-商品搜索</title>
     <link rel="stylesheet" type="text/css" href="{{ static('css/jquery.pagination.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ static('css/reset.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ static('css/main.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ static('css/main.css') }}">
     <script type="text/javascript" src="{{ static('js/jquery-1.12.4.min.js') }}"></script>
-	<script type="text/javascript" src="{{ static('js/vue-2.5.16.js') }}"></script>
+    <script type="text/javascript" src="{{ static('js/vue-2.5.16.js') }}"></script>
     <script type="text/javascript" src="{{ static('js/axios-0.18.0.min.js') }}"></script>
 </head>
 <body>
-    <div id="app">
-	<div class="header_con">
-		<div class="header" v-cloak>
+<div id="app">
+    <div class="header_con">
+        <div class="header" v-cloak>
             <div class="welcome fl">欢迎来到美多商城!</div>
             <div class="fr">
                 <div v-if="username" class="login_btn fl">
@@ -37,29 +37,31 @@
                 </div>
             </div>
         </div>
-	</div>
-	<div class="search_bar clearfix">
-		<a href="{{ url('contents:index') }}" class="logo fl"><img src="{{ static('images/logo.png') }}"></a>
-		<div class="search_wrap fl">
-			<form method="get" action="/search/" class="search_con">
+    </div>
+    <div class="search_bar clearfix">
+        <a href="{{ url('contents:index') }}" class="logo fl"><img src="{{ static('images/logo.png') }}"></a>
+        <div class="search_wrap fl">
+            <form method="get" action="/search/" class="search_con">
                 <input type="text" class="input_text fl" name="q" placeholder="搜索商品">
                 <input type="submit" class="input_btn fr" name="" value="搜索">
             </form>
-			<ul class="search_suggest fl">
-				<li><a href="#">索尼微单</a></li>
-				<li><a href="#">优惠15元</a></li>
-				<li><a href="#">美妆个护</a></li>
-				<li><a href="#">买2免1</a></li>
-			</ul>
-		</div>
-	</div>
+            <ul class="search_suggest fl">
+                <li><a href="#">索尼微单</a></li>
+                <li><a href="#">优惠15元</a></li>
+                <li><a href="#">美妆个护</a></li>
+                <li><a href="#">买2免1</a></li>
+            </ul>
+        </div>
+    </div>
     <div class="main_wrap clearfix">
         <div class=" clearfix">
             <ul class="goods_type_list clearfix">
                 {% for result in page %}
                     <li>
-                        <a href="detail.html"><img src="{{ result.object.default_image.url }}"></a>
-                        <h4><a href="detail.html">{{ result.object.name }}</a></h4>
+                        <a href="{{ url('goods:detail', args=(result.object.id,)) }}"><img
+                                src="{{ result.object.default_image.url }}"></a>
+                        <h4><a href="{{ url('goods:detail', args=(result.object.id,)) }}">{{ result.object.name }}</a>
+                        </h4>
                         <div class="operate">
                             <span class="price">￥{{ result.object.price }}</span>
                             <span>{{ result.object.comments }}评价</span>
@@ -76,34 +78,34 @@
             </div>
         </div>
     </div>
-	<div class="footer">
-		<div class="foot_link">
-			<a href="#">关于我们</a>
-			<span>|</span>
-			<a href="#">联系我们</a>
-			<span>|</span>
-			<a href="#">招聘人才</a>
-			<span>|</span>
-			<a href="#">友情链接</a>
-		</div>
-		<p>CopyRight © 2016 北京美多商业股份有限公司 All Rights Reserved</p>
-		<p>电话：010-****888    京ICP备*******8号</p>
-	</div>
+    <div class="footer">
+        <div class="foot_link">
+            <a href="#">关于我们</a>
+            <span>|</span>
+            <a href="#">联系我们</a>
+            <span>|</span>
+            <a href="#">招聘人才</a>
+            <span>|</span>
+            <a href="#">友情链接</a>
+        </div>
+        <p>CopyRight © 2016 北京美多商业股份有限公司 All Rights Reserved</p>
+        <p>电话：010-****888 京ICP备*******8号</p>
     </div>
-    <script type="text/javascript" src="{{ static('js/common.js') }}"></script>
-    <script type="text/javascript" src="{{ static('js/search.js') }}"></script>
-    <script type="text/javascript" src="{{ static('js/jquery.pagination.min.js') }}"></script>
-    <script type="text/javascript">
-        $(function () {
-            $('#pagination').pagination({
-                currentPage: {{ page.number }},
-                totalPage: {{ paginator.num_pages }},
-                callback:function (current) {
-                    {#location.href = '/search/?q=iphone&page=' + current;#}
-                    location.href = '/search/?q={{ query }}&page=' + current;
-                }
-            })
-        });
-    </script>
+</div>
+<script type="text/javascript" src="{{ static('js/common.js') }}"></script>
+<script type="text/javascript" src="{{ static('js/search.js') }}"></script>
+<script type="text/javascript" src="{{ static('js/jquery.pagination.min.js') }}"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#pagination').pagination({
+            currentPage: {{ page.number }},
+            totalPage: {{ paginator.num_pages }},
+            callback: function (current) {
+                {#location.href = '/search/?q=iphone&page=' + current;#}
+                location.href = '/search/?q={{ query }}&page=' + current;
+            }
+        })
+    });
+</script>
 </body>
 </html>

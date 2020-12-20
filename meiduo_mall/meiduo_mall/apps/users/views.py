@@ -11,7 +11,9 @@ from django.urls import reverse
 from django.views import View
 from django_redis import get_redis_connection
 
+from carts.utils import merge_cart_cookies_redis
 from celery_tasks.email.tasks import send_verify_email
+from goods.models import SKU
 from meiduo_mall.utils.response_code import RETCODE
 from meiduo_mall.utils.views import LoginRequiredJSONMixin
 from users.models import User, Address
@@ -19,6 +21,49 @@ from users.utils import generate_verify_email_url, check_verify_email_token
 from . import constants
 
 logger = logging.getLogger('django')
+
+
+class UserBrowseHistory(LoginRequiredJSONMixin, View):
+    """用户浏览记录"""
+
+    def post(self, request):
+        """保存用户商品浏览记录"""
+        json_str = request.body.decode()
+        json_dict = json.loads(json_str)
+        sku_id = json_dict.get('sku_id')
+
+        try:
+            SKU.objects.get(id=sku_id)
+        except SKU.DoesNotExist:
+            return http.HttpResponseForbidden('参数sku_id错误')
+
+        redis_conn = get_redis_connection('history')
+        user_history_key = 'history_%s' % request.user.id
+        pl = redis_conn.pipeline()
+        # 三步骤: 去重 保存(最新的在最前面) 截取(要求最多存5个)
+        pl.lrem(user_history_key, 0, sku_id)
+        pl.lpush(user_history_key, sku_id)
+        pl.ltrim(user_history_key, 0, 4)
+        pl.execute()
+
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
+
+    def get(self, request):
+        """查询用户商品浏览记录"""
+        redis_conn = get_redis_connection('history')
+        user_history_key = 'history_%s' % request.user.id
+        sku_ids = redis_conn.lrange(user_history_key, 0, -1)
+
+        skus = []
+        for sku_id in sku_ids:
+            sku = SKU.objects.get(id=sku_id)
+            skus.append({
+                'id': sku.id,
+                'name': sku.name,
+                'price': sku.price,
+                'default_image_url': sku.default_image.url
+            })
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'skus': skus})
 
 
 class UpdateTitleAddressView(LoginRequiredJSONMixin, View):
@@ -347,6 +392,10 @@ class LoginView(View):
 
         # 为了实现首页右上角展示用户名信息
         response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
+
+        # 用户登录成功,合并cookie购物车到Redis购物车
+        response = merge_cart_cookies_redis(request=request, user=user, response=response)
+
         return response
 
 
