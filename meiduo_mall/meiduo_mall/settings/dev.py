@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.11/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
-
+import datetime
 import os, sys, global_config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -58,6 +58,18 @@ INSTALLED_APPS = [
     'meiduo_admin',
     'corsheaders',  # 跨域模块
 ]
+
+REST_FRAMEWORK = {
+    # 配置默认的认证方式 base:账号密码验证
+    # session：session_id认证
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # drf的这一阶段主要是做验证,middleware的auth主要是设置session和user到request对象
+        # 默认的验证是按照验证列表从上到下的验证
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
+    )
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware'
@@ -319,3 +331,10 @@ CORS_ORIGIN_WHITELIST = (
     'api.meiduo.site:8000',
 )
 CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
+
+# 超时时间
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',  # token前缀
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'meiduo_admin.utils.jwt_response_payload_handler',
+}
