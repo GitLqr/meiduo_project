@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     'goods',  # 商品模块
     'orders',  # 订单
     'payment',  # 支付
+
+    'meiduo_admin',
 ]
 
 MIDDLEWARE = [
